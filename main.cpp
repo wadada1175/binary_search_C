@@ -13,29 +13,34 @@ int data[SIZE] = {101, 103, 107, 109, 113, 127, 131, 137, 139, 149,
 int main(void)
 {
     int low, mid, high;//配列の範囲を狭めるための添字
-    int target = 433;//探索する値(固定)
+    double sec_time;
+    double sum_time=0;
+    double ave_time;
 
-    high = SIZE;//配列の右端
-    low = 0;//配列の左端
-
-    /* 値が見つかるまで繰り返す */
-    clock_t begin = clock();//時間計測開始
-    while (low <= high) {
-        mid = (low + high) / 2;
-        /* 値が見つかればループを抜ける */
-        if (data[mid] == target) {
-            break;
-            /* 値の大小を調べて探索範囲を狭める */
-        } else if (data[mid] < target) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
+    for (int i = 0; i < SIZE; i++) {
+        int target = data[i];//探索する値
+        high = SIZE;//配列の右端
+        low = 0;//配列の左端
+        /* 値が見つかるまで繰り返す */
+        clock_t begin = clock();//時間計測開始
+        while (low <= high) {
+            mid = (low + high) / 2;
+            /* 値が見つかればループを抜ける */
+            if (data[mid] == target) {
+                clock_t end = clock();//時間計測終了
+                sec_time = (double)(end - begin) / CLOCKS_PER_SEC;
+                sum_time += sec_time;
+                printf("値 %d は配列の %d 番目に見つかりました。\n",target, mid/*+1*/);
+                printf( "処理時間は%10fs\n", sec_time);
+                break;
+                /* 値の大小を調べて探索範囲を狭める */
+            } else if (data[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
         }
     }
-    clock_t end = clock();//時間計測終了
-
-    printf("値 %d は配列の %d 番目に見つかりました。\n",
-           target, mid);
-    printf( "処理時間は%fs\n", (double)(end - begin) / CLOCKS_PER_SEC );
-    return 0;
+    ave_time = sum_time/SIZE;
+    printf("平均処理時間は%.9fs",ave_time);
 }
